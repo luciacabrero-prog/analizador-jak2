@@ -346,6 +346,32 @@ def anotar_dataframe(datos: pd.DataFrame) -> pd.DataFrame:
     datos = datos.copy()
     datos.columns = datos.columns.astype(str).str.strip()
 
+    # Si el usuario vuelve a subir un CSV ya anotado, eliminamos primero
+    # las columnas de salida antiguas para evitar nombres duplicados.
+    columnas_generadas = {
+        "origen_consulta_hgvs",
+        "alphamissense_score",
+        "alphamissense_clasificacion",
+        "transcrito_resultado",
+        "gen_resultado",
+        "consecuencia_mas_severa",
+        "hgvsc_resultado",
+        "hgvsp_resultado",
+        "canonical",
+        "mane_select",
+        "fuente_campo_alphamissense",
+        "estado_anotacion",
+    }
+
+    columnas_a_eliminar = [
+        columna
+        for columna in datos.columns
+        if columna in columnas_generadas
+    ]
+
+    if columnas_a_eliminar:
+        datos = datos.drop(columns=columnas_a_eliminar)
+
     consultas = []
     origenes = []
 
